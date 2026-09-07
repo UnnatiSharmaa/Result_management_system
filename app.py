@@ -29,7 +29,7 @@ if not st_runtime.exists():
     sys.argv = ["streamlit", "run", os.path.abspath(__file__), "--server.headless=false"]
     sys.exit(stcli.main())
 
-st.set_page_config(page_title="Student Result Management System", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Student Result Management System", page_icon="📘", layout="wide")
 db.init_db()
 
 # ---------------------------------------------------------------------
@@ -37,6 +37,10 @@ db.init_db()
 # ---------------------------------------------------------------------
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+
 .stApp { background: #F3F6FA; }
 
 .topbar {
@@ -82,6 +86,88 @@ div[data-testid="stHorizontalBlock"] > div .stButton button:hover {
     font-size: 20px;
     font-weight: 600;
 }
+
+/* ---------- Auth screens (login / register) ---------- */
+.auth-wrap {
+    display: flex;
+    max-width: 900px;
+    margin: 40px auto;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(18,41,77,0.18);
+}
+.auth-side {
+    background: linear-gradient(160deg, #12294D 0%, #1F3E70 100%);
+    color: #EAF0FB;
+    flex: 0 0 40%;
+    padding: 48px 34px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.auth-side h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+.auth-side p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #C4D2EC;
+}
+.auth-form {
+    background: white;
+    flex: 1;
+    padding: 48px 40px;
+}
+.auth-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #12294D;
+    margin-bottom: 4px;
+}
+.auth-subtitle {
+    font-size: 13.5px;
+    color: #7A8399;
+    margin-bottom: 26px;
+}
+.auth-form div[data-testid="stTextInput"] input {
+    border-radius: 8px;
+    border: 1px solid #DDE3EE;
+    padding: 10px 12px;
+}
+.auth-form .stButton button {
+    background: #12294D;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 15px;
+}
+.auth-form .stButton button:hover {
+    background: #1F3E70;
+}
+.auth-form .stFormSubmitButton button {
+    background: #12294D;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    font-weight: 600;
+    font-size: 15px;
+}
+.auth-form .stFormSubmitButton button:hover {
+    background: #1F3E70;
+}
+.auth-link-btn button {
+    background: transparent !important;
+    color: #12294D !important;
+    border: 1px solid #DDE3EE !important;
+    font-weight: 500 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -105,80 +191,110 @@ def go(page):
 # LOGIN PAGE
 # =======================================================================
 def login_page():
-    st.markdown('<div class="topbar">🎓 Student Result Management System — Login</div>', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1, 1.2, 1])
+    st.write("")
+    c1, c2, c3 = st.columns([1, 2.2, 1])
     with c2:
-        st.subheader("Login Here")
-        email = st.text_input("Email address")
-        password = st.text_input("Password", type="password")
-        if st.button("Login", type="primary", use_container_width=True):
-            user = db.verify_login(email.strip(), password)
-            if user:
-                st.session_state.logged_in = True
-                st.session_state.user_email = email
-                go("home")
-            else:
-                st.error("Invalid email or password.")
-        colA, colB = st.columns(2)
-        with colA:
-            if st.button("Register new account", use_container_width=True):
+        left, right = st.columns([1, 1.3], gap="small")
+        with left:
+            st.markdown("""
+            <div class="auth-side" style="border-radius: 18px 0 0 18px; min-height: 460px;">
+                <h2>Student Result<br>Management System</h2>
+                <p>Manage courses, students, and results from one place —
+                with AI-assisted feedback for every result you record.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with right:
+            st.markdown('<div class="auth-form" style="border-radius: 0 18px 18px 0; min-height: 460px;">', unsafe_allow_html=True)
+            st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
+            st.markdown('<div class="auth-subtitle">Log in to continue to your dashboard</div>', unsafe_allow_html=True)
+
+            with st.form("login_form"):
+                email = st.text_input("Email address")
+                password = st.text_input("Password", type="password")
+                submitted = st.form_submit_button("Log in", type="primary", use_container_width=True)
+
+            if submitted:
+                user = db.verify_login(email.strip(), password)
+                if user:
+                    st.session_state.logged_in = True
+                    st.session_state.user_email = email
+                    go("home")
+                else:
+                    st.error("Invalid email or password.")
+
+            st.markdown('<div class="auth-link-btn">', unsafe_allow_html=True)
+            if st.button("Create a new account", use_container_width=True):
                 go("register")
-        with colB:
-            st.caption("Demo tip: register once, then log in with the same details.")
+            st.markdown('</div></div>', unsafe_allow_html=True)
 
 
 # =======================================================================
 # REGISTER PAGE
 # =======================================================================
 def register_page():
-    st.markdown('<div class="topbar">🎓 Student Result Management System — Register</div>', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([1, 1.4, 1])
+    st.write("")
+    c1, c2, c3 = st.columns([0.6, 2.6, 0.6])
     with c2:
-        st.subheader("Register Here")
-        with st.form("register_form", clear_on_submit=False):
-            col1, col2 = st.columns(2)
-            first_name = col1.text_input("First name")
-            last_name = col2.text_input("Last name")
-            contact = col1.text_input("Contact no.")
-            email = col2.text_input("Email")
-            sec_q = st.selectbox("Security question", ["Your first pet's name", "Your birth city", "Your favorite teacher"])
-            answer = st.text_input("Answer")
-            password = st.text_input("Password", type="password")
-            confirm = st.text_input("Confirm password", type="password")
-            agree = st.checkbox("I agree to the terms & conditions")
+        left, right = st.columns([1, 1.5], gap="small")
+        with left:
+            st.markdown("""
+            <div class="auth-side" style="border-radius: 18px 0 0 18px; min-height: 560px;">
+                <h2>Create your<br>account</h2>
+                <p>Set up access to manage courses, students, and results —
+                takes less than a minute.</p>
+            </div>
+            """, unsafe_allow_html=True)
+        with right:
+            st.markdown('<div class="auth-form" style="border-radius: 0 18px 18px 0; min-height: 560px;">', unsafe_allow_html=True)
+            st.markdown('<div class="auth-title">Register</div>', unsafe_allow_html=True)
+            st.markdown('<div class="auth-subtitle">Fill in your details to get started</div>', unsafe_allow_html=True)
 
-            submitted = st.form_submit_button("Register now →", type="primary", use_container_width=True)
+            with st.form("register_form", clear_on_submit=False):
+                col1, col2 = st.columns(2)
+                first_name = col1.text_input("First name")
+                last_name = col2.text_input("Last name")
+                contact = col1.text_input("Contact no.")
+                email = col2.text_input("Email")
+                sec_q = st.selectbox("Security question", ["Your first pet's name", "Your birth city", "Your favorite teacher"])
+                answer = st.text_input("Answer")
+                password = st.text_input("Password", type="password")
+                confirm = st.text_input("Confirm password", type="password")
+                agree = st.checkbox("I agree to the terms & conditions")
 
-        if submitted:
-            missing = []
-            if not first_name.strip():
-                missing.append("First name")
-            if not email.strip():
-                missing.append("Email")
-            if not password:
-                missing.append("Password")
-            if missing:
-                st.error(f"Missing required field(s): {', '.join(missing)}")
-            elif password != confirm:
-                st.error("Passwords do not match.")
-            elif not agree:
-                st.error("Please accept the terms & conditions.")
-            elif db.get_user_by_email(email.strip()):
-                st.error("An account with this email already exists.")
-            else:
-                db.create_user(first_name, last_name, contact, email.strip(), sec_q, answer, password)
-                st.success("Registered! You can log in now.")
+                submitted = st.form_submit_button("Register now", type="primary", use_container_width=True)
+
+            if submitted:
+                missing = []
+                if not first_name.strip():
+                    missing.append("First name")
+                if not email.strip():
+                    missing.append("Email")
+                if not password:
+                    missing.append("Password")
+                if missing:
+                    st.error(f"Missing required field(s): {', '.join(missing)}")
+                elif password != confirm:
+                    st.error("Passwords do not match.")
+                elif not agree:
+                    st.error("Please accept the terms & conditions.")
+                elif db.get_user_by_email(email.strip()):
+                    st.error("An account with this email already exists.")
+                else:
+                    db.create_user(first_name, last_name, contact, email.strip(), sec_q, answer, password)
+                    st.success("Registered! You can log in now.")
+                    go("login")
+
+            st.markdown('<div class="auth-link-btn">', unsafe_allow_html=True)
+            if st.button("Back to login", use_container_width=True):
                 go("login")
-
-        if st.button("← Back to login", use_container_width=True):
-            go("login")
+            st.markdown('</div></div>', unsafe_allow_html=True)
 
 
 # =======================================================================
 # NAVBAR (shown on every page once logged in)
 # =======================================================================
 def navbar():
-    st.markdown('<div class="topbar">🎓 Student Result Management System</div>', unsafe_allow_html=True)
+    st.markdown('<div class="topbar">Student Result Management System</div>', unsafe_allow_html=True)
     cols = st.columns(6)
     labels = ["Home", "Course", "Student", "Result", "View Student Results", "Logout"]
     targets = ["home", "course", "student", "result", "view_results", "logout"]
@@ -354,7 +470,7 @@ def result_page():
                     remark = ai_feedback.generate_remark_rule_based(name, percentage)
             db.save_result(student_id, marks_obtained, full_marks, remark)
             st.success(f"Result saved — {percentage}%")
-            st.info(f"📝 {remark}")
+            st.info(remark)
 
     with right:
         st.image(
