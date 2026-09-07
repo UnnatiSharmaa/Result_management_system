@@ -88,78 +88,78 @@ div[data-testid="stHorizontalBlock"] > div .stButton button:hover {
 }
 
 /* ---------- Auth screens (login / register) ---------- */
-.auth-wrap {
-    display: flex;
-    max-width: 900px;
-    margin: 40px auto;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 12px 32px rgba(18,41,77,0.18);
+.block-container {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
 }
-.auth-side {
+header[data-testid="stHeader"] { background: transparent; }
+
+.st-key-auth_side_login, .st-key-auth_side_register {
     background: linear-gradient(160deg, #12294D 0%, #1F3E70 100%);
-    color: #EAF0FB;
-    flex: 0 0 40%;
-    padding: 48px 34px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding: 0 60px;
 }
-.auth-side h2 {
+.st-key-auth_form_login, .st-key-auth_form_register {
+    background: #FFFFFF;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 80px;
+}
+
+.auth-side-title {
     font-family: 'Poppins', sans-serif;
-    font-size: 26px;
+    font-size: 42px;
     font-weight: 700;
-    margin-bottom: 12px;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 18px;
 }
-.auth-side p {
-    font-size: 14px;
-    line-height: 1.6;
+.auth-side-text {
+    font-size: 16px;
+    line-height: 1.7;
     color: #C4D2EC;
+    max-width: 400px;
 }
-.auth-form {
-    background: white;
-    flex: 1;
-    padding: 48px 40px;
-}
+
+.auth-form-inner { max-width: 380px; margin: 0 auto; width: 100%; }
 .auth-title {
     font-family: 'Poppins', sans-serif;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 700;
     color: #12294D;
     margin-bottom: 4px;
 }
 .auth-subtitle {
-    font-size: 13.5px;
+    font-size: 14px;
     color: #7A8399;
-    margin-bottom: 26px;
+    margin-bottom: 28px;
 }
-.auth-form div[data-testid="stTextInput"] input {
+.auth-form-inner div[data-testid="stTextInput"] input {
     border-radius: 8px;
     border: 1px solid #DDE3EE;
     padding: 10px 12px;
 }
-.auth-form .stButton button {
+.auth-form-inner .stButton button,
+.auth-form-inner .stFormSubmitButton button {
     background: #12294D;
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 10px 0;
+    padding: 11px 0;
     font-weight: 600;
     font-size: 15px;
+    width: 100%;
 }
-.auth-form .stButton button:hover {
-    background: #1F3E70;
-}
-.auth-form .stFormSubmitButton button {
-    background: #12294D;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 0;
-    font-weight: 600;
-    font-size: 15px;
-}
-.auth-form .stFormSubmitButton button:hover {
+.auth-form-inner .stButton button:hover,
+.auth-form-inner .stFormSubmitButton button:hover {
     background: #1F3E70;
 }
 .auth-link-btn button {
@@ -191,20 +191,19 @@ def go(page):
 # LOGIN PAGE
 # =======================================================================
 def login_page():
-    st.write("")
-    c1, c2, c3 = st.columns([1, 2.2, 1])
-    with c2:
-        left, right = st.columns([1, 1.3], gap="small")
-        with left:
+    left, right = st.columns([1, 1.3], gap="small")
+
+    with left:
+        with st.container(key="auth_side_login"):
             st.markdown("""
-            <div class="auth-side" style="border-radius: 18px 0 0 18px; min-height: 460px;">
-                <h2>Student Result<br>Management System</h2>
-                <p>Manage courses, students, and results from one place —
-                with AI-assisted feedback for every result you record.</p>
-            </div>
+            <div class="auth-side-title">Student Result<br>Management System</div>
+            <div class="auth-side-text">Manage courses, students, and results from one place —
+            with AI-assisted feedback for every result you record.</div>
             """, unsafe_allow_html=True)
-        with right:
-            st.markdown('<div class="auth-form" style="border-radius: 0 18px 18px 0; min-height: 460px;">', unsafe_allow_html=True)
+
+    with right:
+        with st.container(key="auth_form_login"):
+            st.markdown('<div class="auth-form-inner">', unsafe_allow_html=True)
             st.markdown('<div class="auth-title">Welcome back</div>', unsafe_allow_html=True)
             st.markdown('<div class="auth-subtitle">Log in to continue to your dashboard</div>', unsafe_allow_html=True)
 
@@ -225,27 +224,27 @@ def login_page():
             st.markdown('<div class="auth-link-btn">', unsafe_allow_html=True)
             if st.button("Create a new account", use_container_width=True):
                 go("register")
-            st.markdown('</div></div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 
 # =======================================================================
 # REGISTER PAGE
 # =======================================================================
 def register_page():
-    st.write("")
-    c1, c2, c3 = st.columns([0.6, 2.6, 0.6])
-    with c2:
-        left, right = st.columns([1, 1.5], gap="small")
-        with left:
+    left, right = st.columns([1, 1.3], gap="small")
+
+    with left:
+        with st.container(key="auth_side_register"):
             st.markdown("""
-            <div class="auth-side" style="border-radius: 18px 0 0 18px; min-height: 560px;">
-                <h2>Create your<br>account</h2>
-                <p>Set up access to manage courses, students, and results —
-                takes less than a minute.</p>
-            </div>
+            <div class="auth-side-title">Create your<br>account</div>
+            <div class="auth-side-text">Set up access to manage courses, students, and results —
+            takes less than a minute.</div>
             """, unsafe_allow_html=True)
-        with right:
-            st.markdown('<div class="auth-form" style="border-radius: 0 18px 18px 0; min-height: 560px;">', unsafe_allow_html=True)
+
+    with right:
+        with st.container(key="auth_form_register"):
+            st.markdown('<div class="auth-form-inner">', unsafe_allow_html=True)
             st.markdown('<div class="auth-title">Register</div>', unsafe_allow_html=True)
             st.markdown('<div class="auth-subtitle">Fill in your details to get started</div>', unsafe_allow_html=True)
 
@@ -287,7 +286,8 @@ def register_page():
             st.markdown('<div class="auth-link-btn">', unsafe_allow_html=True)
             if st.button("Back to login", use_container_width=True):
                 go("login")
-            st.markdown('</div></div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 
 # =======================================================================
